@@ -1,6 +1,6 @@
-######### Migalys Pavon, 2018-08-13 checkingIntegrity.sh ####################
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
+######### Migalys Pavon, 2018-08-13 checkingIntegrity.sh ####################
 
 ####################### To install and configure AIDE ########################
 ##### Check whether AIDE is installed. If not, install and configure it ######
@@ -122,14 +122,14 @@ if ! aide --config=/etc/aide/aide.conf --check; then
     if [[ -n "$list" ]]; then
         echo "${message} on ${date}." | mailx ${list} -s "AIDE alert on ${date}"
         if [[ $? -ne 0 ]]; then
-            echo "Unable to send email to ${list} with aler: ${message}."
+            echo "Unable to send email to ${list} with alert: ${message}."
         else
             echo "AIDE alert was sent to ${list}: ${message}."
         fi
     else
         echo "There were no valid users to send AIDE alert on ${date}." | mailx ${adm} -s "AIDE alert error on ${date}"
         if [[ $? -ne 0 ]]; then
-            echo "Unable to send email to admins with aler: ${message}."
+            echo "Unable to send email to admins with alert: ${message}."
         else
             echo "There were no valid users to send AIDE alert: ${message}."
         fi

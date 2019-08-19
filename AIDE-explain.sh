@@ -1,6 +1,6 @@
-######### Migalys Pavon, 2018-08-13 AIDE-explain.sh ####################
 #!/bin/bash
 
+######### Migalys Pavon, 2018-08-13 AIDE-explain.sh ####################
 
 #### Scrip to check changes reported by AIDE and return ####
 #####        Date and time of AIDE execution          ######
@@ -8,7 +8,7 @@
 #####        Name of files that have been removed     ######
 #####        Name of files that have changed          ######
 
-#cheking for new files
+#cheking for new files or directories
 new_file() {
     new=$(echo "$aide_output" | grep "f+++++++++" | cut -d' ' -f2)
     new_count=$(echo "$new" | grep -cv ^\$)
@@ -20,15 +20,37 @@ new_file() {
     fi
 }
 
-#checking for removed files
+new_dir() {
+    new=$(echo "$aide_output" | grep "d+++++++++" | cut -d' ' -f2)
+    new_count=$(echo "$new" | grep -cv ^\$)
+    if [[ ${new_count} -gt 0 ]]; then
+        echo -e "\n${new_count} Directories have been added"
+        echo "${new}"
+    else
+        echo -e "\nNo Directories were added"
+    fi
+}
+
+#checking for removed files or directory
 removed_file() {
-    removed=$(echo "$aide_output" | grep "f-----------" | cut -d' ' -f2)
+    removed=$(echo "$aide_output" | grep "f----------" | cut -d' ' -f2)
     remv_count=$(echo "$removed" | grep -cv ^\$)
     if [[ ${remv_count} -gt 0 ]]; then
         echo -e "\n${remv_count} Files have been removed"
         echo  "${removed}"
     else
         echo -e "\nNo files were removed"
+    fi
+}
+
+removed_dir() {
+    removed=$(echo "$aide_output" | grep "d----------" | cut -d' ' -f2)
+    remv_count=$(echo "$removed" | grep -cv ^\$)
+    if [[ ${remv_count} -gt 0 ]]; then
+        echo -e "\n${remv_count} Directories have been removed"
+        echo  "${removed}"
+    else
+        echo -e "\nNo Directories were removed"
     fi
 }
 
@@ -83,6 +105,17 @@ changed_file() {
     fi
 }
 
+changed_dir() {
+    content=$(echo "$aide_output" | grep "d [=<>] " | cut -d' ' -f10)
+    cont_count=$(echo "$content" | grep -cv ^\$)
+    if [[ ${cont_count} -gt 0 ]]; then
+        echo -e "\n${cont_count} Directories have been changed."
+        echo  "${content}"
+    else
+        echo -e "\nNo Directories have been changed"
+    fi
+}
+
 #check if AIDE is installed
 if ! aide -version 2>/dev/null; then
     echo "AIDE is not installed, please."
@@ -99,7 +132,10 @@ else
         echo -e "\nAIDE detected changes"
 
         new_file
+        new_dir
         removed_file
+        removed_dir
+        changed_dir
         changed_file
 
     else
