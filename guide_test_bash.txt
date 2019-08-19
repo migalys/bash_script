@@ -1,0 +1,37 @@
+
+Guide to test checkIntegrity.sh
+
+In new Kali
+login root - toor
+aide --version
+
+pwd under /root
+vi checkIntegrity.sh
+insert code
+save !wq
+
+chmod +x checkIntegrity.sh
+
+execute
+
+./checkIntegrity.sh
+In this case as no users were entered.... and we have not added user to sudo
+There were no valid users to send AIDE alert: AIDE detected changes in the system!.
+
+adding users to sudo
+first add user
+adduser user1
+adduser user2
+
+usermod -G sudo user1 
+usermod -G sudo user2
+
+now we got the same msg but also an email to users from sudo
+go to 
+/var/spool/mail
+
+add users no sudo
+
+./checkIntegrity.sh user4 user5
+
+cp /var/lib/aide/aide.db.new  /var/lib/aide/aide.db
